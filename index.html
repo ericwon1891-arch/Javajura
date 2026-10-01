@@ -96,6 +96,7 @@
   .empty, .note { color: var(--muted); font-size: 14px; }
   footer { margin-top: 32px; font-size: 12px; color: var(--muted); }
   footer a { color: inherit; }
+  footer a.add { display: inline-block; margin-left: 4px; padding: 2px 10px; border-radius: 999px; background: var(--practice-soft); color: var(--practice); font-weight: 700; text-decoration: none; }
 
   @media (max-width: 480px) {
     main { padding: 20px 10px 40px; }
@@ -317,7 +318,7 @@ document.querySelectorAll(".filters .btn").forEach(b => b.addEventListener("clic
     const club = games.club_idx ? ` · <a href="https://www.gameone.kr/club/?club_idx=${games.club_idx}" target="_blank" rel="noopener">게임원 팀 페이지</a>` : "";
     foot.push(`게임원 일정 갱신: ${esc(games.updated.replace("T", " ").slice(0, 16))}${club}`);
   }
-  foot.push("연습 일정은 단톡방 투표 확정 후 등록됩니다.");
+  foot.push(`연습 일정은 단톡방 투표 확정 후 등록됩니다. <a class="add" href="https://github.com/ericwon1891-arch/Javajura/issues/new?template=practice.yml" target="_blank" rel="noopener">+ 연습 추가</a>`);
   document.getElementById("footer").innerHTML = foot.join("<br>");
   render();
 })();
