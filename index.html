@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>자바주라 일정표</title>
+<meta name="description" content="자바주라 야구팀 경기와 연습 일정">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚾</text></svg>">
+<style>
+  :root {
+    --bg: #f6f5f1; --card: #ffffff; --ink: #1d1f23; --muted: #6b6f76; --line: #e3e1da;
+    --game: #c8372d; --game-soft: #fbe9e7; --practice: #1f6f4a; --practice-soft: #e4f2ea;
+    --accent: #1d3557;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #15171a; --card: #1e2125; --ink: #ecebe7; --muted: #9a9ea5; --line: #2e3237;
+      --game: #ff7b6e; --game-soft: #3a2220; --practice: #5fcf98; --practice-soft: #1b3226;
+      --accent: #9cc3ff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  }
+  main { max-width: 640px; margin: 0 auto; padding: 24px 16px 48px; }
+  header h1 { margin: 0; font-size: 26px; letter-spacing: -0.02em; }
+  header p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+
+  .next { margin: 20px 0; padding: 18px; border-radius: 14px; background: var(--accent); color: #fff; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .next { color: #10151c; } }
+  .next small { opacity: .8; font-size: 13px; }
+  .next .what { font-size: 20px; font-weight: 700; margin-top: 2px; }
+  .next .when { font-size: 15px; margin-top: 2px; }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 8px; }
+  .filters button {
+    border: 1px solid var(--line); background: var(--card); color: var(--ink);
+    border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 14px; cursor: pointer;
+  }
+  .filters button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  h2.month { font-size: 15px; color: var(--muted); margin: 24px 0 8px; font-weight: 600; }
+  .item {
+    display: grid; grid-template-columns: 56px 1fr; gap: 12px; align-items: start;
+    background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--c);
+    border-radius: 10px; padding: 12px; margin-bottom: 8px; text-decoration: none; color: inherit;
+  }
+  .item.game { --c: var(--game); --soft: var(--game-soft); }
+  .item.practice { --c: var(--practice); --soft: var(--practice-soft); }
+  .item.past { opacity: .55; }
+  .day { text-align: center; }
+  .day b { display: block; font-size: 22px; line-height: 1.1; }
+  .day span { font-size: 12px; color: var(--muted); }
+  .tag { display: inline-block; font-size: 12px; font-weight: 700; color: var(--c); background: var(--soft); border-radius: 4px; padding: 1px 6px; margin-right: 6px; }
+  .title { font-weight: 600; }
+  .meta { font-size: 14px; color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
+  .result { font-weight: 700; color: var(--ink); }
+  .empty, .note { color: var(--muted); font-size: 14px; }
+  .toggle { margin-top: 20px; background: none; border: 0; color: var(--accent); font: inherit; font-size: 14px; cursor: pointer; padding: 0; }
+  footer { margin-top: 32px; font-size: 12px; color: var(--muted); }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>⚾ 자바주라 일정표</h1>
+    <p>게임원 경기 일정과 팀 연습을 한곳에서 봅니다.</p>
+  </header>
+
+  <section class="next" id="next" hidden></section>
+
+  <div class="filters" role="group" aria-label="일정 종류">
+    <button data-f="all" aria-pressed="true">전체</button>
+    <button data-f="game" aria-pressed="false">경기</button>
+    <button data-f="practice" aria-pressed="false">연습</button>
+  </div>
+
+  <div id="list"><p class="note">일정을 불러오는 중…</p></div>
+  <button class="toggle" id="toggle-past" hidden></button>
+
+  <footer id="footer"></footer>
+</main>
+<script>
+const DOW = ["일", "월", "화", "수", "목", "금", "토"];
+const state = { filter: "all", showPast: false, items: [], games: null };
+
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const todayKST = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+
+async function load(path) {
+  try {
+    const r = await fetch(path + "?t=" + Date.now(), { cache: "no-store" });
+    return r.ok ? await r.json() : null;
+  } catch { return null; }
+}
+
+function describe(it) {
+  if (it.type === "game") {
+    return {
+      tag: "경기",
+      title: it.opponent ? `vs ${it.opponent}` : (it.league || "경기"),
+      meta: [it.time, it.place, it.opponent && it.league].filter(Boolean).join(" · "),
+      result: it.result && /\d/.test(it.result) ? it.result : "",
+    };
+  }
+  return {
+    tag: "연습",
+    title: "팀 연습" + (it.headcount ? ` (${it.headcount}명)` : ""),
+    meta: [it.time, it.place, it.memo].filter(Boolean).join(" · "),
+    result: "",
+  };
+}
+
+function render() {
+  const today = todayKST();
+  const visible = state.items.filter(it => state.filter === "all" || it.type === state.filter);
+  const upcoming = visible.filter(it => it.date >= today);
+  const past = visible.filter(it => it.date < today);
+  const shown = state.showPast ? [...past, ...upcoming] : upcoming;
+
+  const next = state.items.find(it => it.date >= today);
+  const nextEl = document.getElementById("next");
+  if (next) {
+    const d = describe(next), dt = new Date(next.date + "T00:00:00");
+    const days = Math.round((dt - new Date(today + "T00:00:00")) / 864e5);
+    nextEl.innerHTML = `<small>다음 일정 · ${days === 0 ? "오늘" : days === 1 ? "내일" : days + "일 뒤"}</small>
+      <div class="what">${esc(d.tag)} ${esc(d.title)}</div>
+      <div class="when">${dt.getMonth() + 1}월 ${dt.getDate()}일 (${DOW[dt.getDay()]}) ${esc(d.meta)}</div>`;
+    nextEl.hidden = false;
+  } else nextEl.hidden = true;
+
+  const list = document.getElementById("list");
+  if (!shown.length) {
+    list.innerHTML = `<p class="empty">${state.showPast ? "일정이 없습니다." : "예정된 일정이 없습니다."}</p>`;
+  } else {
+    let html = "", month = "";
+    for (const it of shown) {
+      const dt = new Date(it.date + "T00:00:00");
+      const m = `${dt.getFullYear()}년 ${dt.getMonth() + 1}월`;
+      if (m !== month) { html += `<h2 class="month">${m}</h2>`; month = m; }
+      const d = describe(it);
+      const tagName = it.url ? "a" : "div";
+      const href = it.url ? ` href="${esc(it.url)}" target="_blank" rel="noopener"` : "";
+      html += `<${tagName} class="item ${it.type}${it.date < today ? " past" : ""}"${href}>
+        <div class="day"><b>${dt.getDate()}</b><span>${DOW[dt.getDay()]}요일</span></div>
+        <div>
+          <div><span class="tag">${d.tag}</span><span class="title">${esc(d.title)}</span></div>
+          ${d.meta || d.result ? `<div class="meta">${d.result ? `<span class="result">${esc(d.result)}</span> · ` : ""}${esc(d.meta)}</div>` : ""}
+        </div>
+      </${tagName}>`;
+    }
+    list.innerHTML = html;
+  }
+
+  const toggle = document.getElementById("toggle-past");
+  toggle.hidden = !past.length;
+  toggle.textContent = state.showPast ? "지난 일정 숨기기" : `지난 일정 보기 (${past.length})`;
+}
+
+document.querySelectorAll(".filters button").forEach(b => b.addEventListener("click", () => {
+  state.filter = b.dataset.f;
+  document.querySelectorAll(".filters button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  render();
+}));
+document.getElementById("toggle-past").addEventListener("click", () => { state.showPast = !state.showPast; render(); });
+
+(async () => {
+  const [games, practices] = await Promise.all([load("data/games.json"), load("data/practices.json")]);
+  state.items = [...(games?.games || []), ...(practices?.practices || [])]
+    .filter(it => it.date)
+    .sort((a, b) => (a.date + (a.time || "")).localeCompare(b.date + (b.time || "")));
+  const foot = [];
+  if (games?.updated) {
+    const club = games.club_idx ? ` · <a href="https://www.gameone.kr/club/?club_idx=${games.club_idx}" target="_blank" rel="noopener">게임원 팀 페이지</a>` : "";
+    foot.push(`게임원 일정 갱신: ${esc(games.updated.replace("T", " ").slice(0, 16))}${club}`);
+  }
+  foot.push("연습 일정은 단톡방 투표 확정 후 등록됩니다.");
+  document.getElementById("footer").innerHTML = foot.join("<br>");
+  render();
+})();
+</script>
+</body>
+</html>

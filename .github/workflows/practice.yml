@@ -1,0 +1,53 @@
+name: 연습 추가
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: data-commit
+  cancel-in-progress: false
+
+jobs:
+  add:
+    # '연습' 라벨이 붙은 이슈만, 저장소 주인/공동작업자가 올린 것만 반영한다.
+    if: >-
+      contains(github.event.issue.labels.*.name, '연습') &&
+      contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.issue.author_association)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 연습 일정 추가
+        id: add
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: python scripts/add_practice.py
+      - name: 저장
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/practices.json
+          git diff --cached --quiet || git commit -m "연습 추가: ${{ steps.add.outputs.summary }}"
+          git pull --rebase
+          git push
+      - name: 이슈 닫기
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue close ${{ github.event.issue.number }} -R ${{ github.repository }} \
+            -c "일정표에 올렸습니다: ${{ steps.add.outputs.summary }} (반영까지 1~2분)"
+      - name: 실패 알림
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment ${{ github.event.issue.number }} -R ${{ github.repository }} \
+            -b "일정표에 올리지 못했습니다. 날짜를 2026-10-12 형식으로 고쳐서 이슈를 수정하면 다시 시도합니다."

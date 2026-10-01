@@ -1,0 +1,45 @@
+name: 게임원 일정 가져오기
+
+on:
+  schedule:
+    - cron: "0 22,3,9 * * *" # 한국시간 07시, 12시, 18시
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: "게임원 표 내용을 로그에 출력"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: data-commit
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 게임원에서 일정 가져오기
+        env:
+          GAMEONE_CLUB_IDX: ${{ vars.GAMEONE_CLUB_IDX }}
+          GAMEONE_DEBUG: ${{ inputs.debug && '1' || '0' }}
+        run: python scripts/fetch_gameone.py
+      - name: 바뀐 일정 저장
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/games.json
+          # 갱신 시각만 바뀐 경우는 커밋하지 않는다.
+          if git diff --cached -U0 data/games.json | grep -E '^[+-] ' | grep -vq '"updated"'; then
+            git commit -m "게임원 일정 갱신"
+            git pull --rebase
+            git push
+          else
+            echo "변경 없음"
+          fi

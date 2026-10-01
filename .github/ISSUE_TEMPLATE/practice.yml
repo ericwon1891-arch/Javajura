@@ -1,0 +1,39 @@
+name: 연습 추가
+description: 단톡방 투표로 확정된 연습을 일정표에 올립니다.
+title: "연습 추가"
+labels: ["연습"]
+body:
+  - type: input
+    id: date
+    attributes:
+      label: 날짜
+      description: "예: 2026-10-12"
+      placeholder: "2026-10-12"
+    validations:
+      required: true
+  - type: input
+    id: time
+    attributes:
+      label: 시간
+      description: "예: 08:00-11:00"
+      placeholder: "08:00-11:00"
+    validations:
+      required: true
+  - type: input
+    id: place
+    attributes:
+      label: 장소
+      placeholder: "OO 야구장"
+    validations:
+      required: true
+  - type: input
+    id: headcount
+    attributes:
+      label: 인원
+      description: "투표로 확정된 참석 인원 (숫자)"
+      placeholder: "12"
+  - type: textarea
+    id: memo
+    attributes:
+      label: 메모
+      description: "준비물, 회비 등 (선택)"
