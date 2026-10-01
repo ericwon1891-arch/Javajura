@@ -17,14 +17,16 @@ from html.parser import HTMLParser
 
 BASE = "https://www.gameone.kr"
 OUT = os.path.join(os.path.dirname(__file__), "..", "data", "games.json")
+TEAM_NAME = os.environ.get("GAMEONE_TEAM_NAME", "자바주라")
+SPAN_CLASSES = {"team_name", "score", "exp_win"}
 UA = "Mozilla/5.0 (team-schedule-bot; +https://github.com)"
 
 COLUMN_KEYS = {
     "date": ["일시", "일자", "날짜", "경기일"],
     "time": ["시간"],
     "place": ["구장", "장소", "경기장"],
-    "league": ["리그", "대회"],
-    "opponent": ["상대", "대진", "VS", "vs"],
+    "league": ["분류", "리그", "대회"],
+    "opponent": ["게임", "상대", "대진"],
     "result": ["결과", "스코어", "점수"],
 }
 
@@ -43,15 +45,30 @@ class TableParser(HTMLParser):
         elif tag == "tr" and self._stack:
             self._row = []
         elif tag in ("td", "th") and self._row is not None:
-            self._cell = {"text": "", "links": [], "th": tag == "th"}
+            self._cell = {"text": "", "links": [], "th": tag == "th", "spans": [], "winner": None}
+            self._span = None
         elif tag == "a" and self._cell is not None:
             href = dict(attrs).get("href")
             if href:
                 self._cell["links"].append(html.unescape(href))
+        elif tag == "span" and self._cell is not None:
+            cls = dict(attrs).get("class") or ""
+            self._span = {"class": cls.strip(), "text": "", "team": getattr(self, "_team", None)} \
+                if cls.strip() in SPAN_CLASSES else None
+            if self._span:
+                self._cell["spans"].append(self._span)
+        elif tag == "div" and self._cell is not None:
+            cls = (dict(attrs).get("class") or "").split()
+            if cls[:1] == ["game"] and len(cls) > 1:
+                self._cell["winner"] = cls[1]  # 'team1' / 'team2'
+            elif cls[:1] in (["team1"], ["team2"]):
+                self._team = cls[0]
         elif tag == "br" and self._cell is not None:
             self._cell["text"] += " "
 
     def handle_endtag(self, tag):
+        if tag == "span":
+            self._span = None
         if tag in ("td", "th") and self._cell is not None:
             self._cell["text"] = re.sub(r"\s+", " ", self._cell["text"]).strip()
             self._row.append(self._cell)
@@ -66,6 +83,8 @@ class TableParser(HTMLParser):
     def handle_data(self, data):
         if self._cell is not None:
             self._cell["text"] += data
+            if self._span is not None:
+                self._span["text"] += data.strip()
 
 
 # 게임원 서버는 오래된 DH 키를 써서 기본 보안 수준(SECLEVEL=2)에서는 접속이 거부된다.
@@ -111,6 +130,33 @@ def parse_time(text):
     return f"{int(t.group(1)):02d}:{t.group(2)}" if t else None
 
 
+def matchup(cell):
+    """게임 칸에서 상대팀, 우리/상대 점수, 승패를 뽑는다. 게임원은 div.team1/div.team2 안에 팀명·점수를 둔다."""
+    teams = {}
+    for sp in cell["spans"]:
+        t = teams.setdefault(sp.get("team") or "?", {})
+        t[sp["class"]] = sp["text"]
+    ours = next((k for k, t in teams.items() if t.get("team_name") == TEAM_NAME), None)
+    theirs = next((k for k in teams if k != ours), None)
+    if not ours or not theirs:
+        return {"opponent": cell["text"].replace(TEAM_NAME, "").strip(), "score": "", "outcome": ""}
+    us, them = teams[ours], teams[theirs]
+    score, outcome = "", ""
+    if us.get("score", "").isdigit() and them.get("score", "").isdigit():
+        a, b = int(us["score"]), int(them["score"])
+        score = f"{a}:{b}"
+        if cell["winner"] in ("team1", "team2"):
+            outcome = "승" if cell["winner"] == ours else "패"
+        else:
+            outcome = "승" if a > b else "패" if a < b else "무"
+        # 'exp_win'(콜드승, 몰수승 등)은 이긴 팀 쪽에 붙는다. 우리가 졌으면 '…패'로 바꿔 쓴다.
+        if us.get("exp_win"):
+            outcome += f" ({us['exp_win']})"
+        elif them.get("exp_win"):
+            outcome += f" ({them['exp_win'].replace('승', '패')})"
+    return {"opponent": them.get("team_name", ""), "score": score, "outcome": outcome}
+
+
 def games_from_tables(tables, season, club_idx):
     games = []
     for table in tables:
@@ -130,14 +176,20 @@ def games_from_tables(tables, season, club_idx):
             if not date:
                 continue
             link = next((l for c in row for l in c["links"] if "game_idx" in l), None)
+            mu = matchup(row[col["opponent"]]) if col["opponent"] is not None and col["opponent"] < len(row) else \
+                {"opponent": "", "score": "", "outcome": ""}
+            status = get("result")
             games.append({
                 "type": "game",
                 "date": date,
                 "time": time or parse_time(get("time")),
                 "place": get("place"),
                 "league": get("league"),
-                "opponent": get("opponent"),
-                "result": get("result"),
+                "opponent": mu["opponent"],
+                "score": mu["score"],
+                "outcome": mu["outcome"],
+                # 게임대기/BOX SCORE 외의 표시(우천취소 등)는 그대로 보여준다.
+                "status": "" if status in ("게임대기", "BOX SCORE") else status,
                 "url": (BASE + link if link and link.startswith("/") else link)
                        or f"{BASE}/club/info/schedule/table?club_idx={club_idx}&season={season}",
             })
@@ -165,11 +217,8 @@ def main():
         print(f"{season}: 표 {len(p.tables)}개, 경기 {len(found)}개 ({url})")
         if debug:
             for t in p.tables:
-                for r in t:
+                for r in t[:6]:
                     print("   ", " | ".join(c["text"] for c in r))
-                m = re.search(r"BOX SCORE", page)
-                if m:
-                    print("   RAW:", re.sub(r"\s+", " ", page[max(0, m.start() - 2500):m.start() + 200]))
                 print("   ---")
         games += found
 

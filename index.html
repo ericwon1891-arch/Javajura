@@ -57,6 +57,8 @@
   .title { font-weight: 600; }
   .meta { font-size: 14px; color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
   .result { font-weight: 700; color: var(--ink); }
+  .result.win { color: var(--practice); }
+  .result.lose { color: var(--game); }
   .empty, .note { color: var(--muted); font-size: 14px; }
   .toggle { margin-top: 20px; background: none; border: 0; color: var(--accent); font: inherit; font-size: 14px; cursor: pointer; padding: 0; }
   footer { margin-top: 32px; font-size: 12px; color: var(--muted); }
@@ -102,8 +104,9 @@ function describe(it) {
     return {
       tag: "경기",
       title: it.opponent ? `vs ${it.opponent}` : (it.league || "경기"),
-      meta: [it.time, it.place, it.opponent && it.league].filter(Boolean).join(" · "),
-      result: it.result && /\d/.test(it.result) ? it.result : "",
+      meta: [it.time, it.place, it.league].filter(Boolean).join(" · "),
+      result: [it.score, it.outcome, it.status].filter(Boolean).join(" "),
+      win: (it.outcome || "").startsWith("승") ? "win" : (it.outcome || "").startsWith("패") ? "lose" : "",
     };
   }
   return {
@@ -148,7 +151,7 @@ function render() {
         <div class="day"><b>${dt.getDate()}</b><span>${DOW[dt.getDay()]}요일</span></div>
         <div>
           <div><span class="tag">${d.tag}</span><span class="title">${esc(d.title)}</span></div>
-          ${d.meta || d.result ? `<div class="meta">${d.result ? `<span class="result">${esc(d.result)}</span> · ` : ""}${esc(d.meta)}</div>` : ""}
+          ${d.meta || d.result ? `<div class="meta">${d.result ? `<span class="result ${d.win || ""}">${esc(d.result)}</span> · ` : ""}${esc(d.meta)}</div>` : ""}
         </div>
       </${tagName}>`;
     }
