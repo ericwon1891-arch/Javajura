@@ -50,4 +50,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh issue comment ${{ github.event.issue.number }} -R ${{ github.repository }} \
-            -b "일정표에 올리지 못했습니다. 날짜를 2026-10-12 형식으로 고쳐서 이슈를 수정하면 다시 시도합니다."
+            -b "일정표에 올리지 못했습니다. 연도를 확인해 주세요. 날짜를 올해 기준 2026-10-12 형식으로 고쳐서 이슈를 수정하면 다시 시도합니다."
