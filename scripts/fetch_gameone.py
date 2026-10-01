@@ -165,8 +165,11 @@ def main():
         print(f"{season}: 표 {len(p.tables)}개, 경기 {len(found)}개 ({url})")
         if debug:
             for t in p.tables:
-                for r in t[:4]:
+                for r in t:
                     print("   ", " | ".join(c["text"] for c in r))
+                m = re.search(r"BOX SCORE", page)
+                if m:
+                    print("   RAW:", re.sub(r"\s+", " ", page[max(0, m.start() - 2500):m.start() + 200]))
                 print("   ---")
         games += found
 
