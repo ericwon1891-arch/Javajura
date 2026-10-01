@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-01T14:34+09:00",
+  "updated": "2026-10-01T14:37+09:00",
   "club_idx": 36818,
   "games": [
     {
@@ -7,9 +7,11 @@
       "date": "2026-05-09",
       "time": "08:00",
       "place": "OKB",
-      "league": "",
-      "opponent": "",
-      "result": "BOX SCORE",
+      "league": "토요전반기A조(4부통합)",
+      "opponent": "백산 발바닥스",
+      "score": "10:17",
+      "outcome": "패",
+      "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1685792"
     },
     {
@@ -17,9 +19,11 @@
       "date": "2026-05-23",
       "time": "08:00",
       "place": "OKB",
-      "league": "",
-      "opponent": "",
-      "result": "BOX SCORE",
+      "league": "토요전반기A조(4부통합)",
+      "opponent": "서든데스",
+      "score": "2:13",
+      "outcome": "패 (콜드패)",
+      "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1685804"
     },
     {
@@ -27,9 +31,11 @@
       "date": "2026-05-30",
       "time": "06:00",
       "place": "OKB",
-      "league": "",
-      "opponent": "",
-      "result": "BOX SCORE",
+      "league": "토요전반기A조(4부통합)",
+      "opponent": "레알로얄",
+      "score": "15:9",
+      "outcome": "승",
+      "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1685809"
     },
     {
@@ -37,9 +43,11 @@
       "date": "2026-07-04",
       "time": "09:50",
       "place": "OKB",
-      "league": "",
-      "opponent": "",
-      "result": "BOX SCORE",
+      "league": "토요전반기A조(4부통합)",
+      "opponent": "스모커즈",
+      "score": "5:10",
+      "outcome": "패",
+      "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1685837"
     },
     {
@@ -47,9 +55,11 @@
       "date": "2026-07-11",
       "time": "09:50",
       "place": "OKB",
-      "league": "",
-      "opponent": "",
-      "result": "BOX SCORE",
+      "league": "토요전반기A조(4부통합)",
+      "opponent": "으르렁(어흥)야구단",
+      "score": "2:14",
+      "outcome": "패 (콜드패)",
+      "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1685824"
     },
     {
@@ -57,9 +67,11 @@
       "date": "2026-07-25",
       "time": "15:40",
       "place": "OKB",
-      "league": "",
-      "opponent": "",
-      "result": "BOX SCORE",
+      "league": "토요후반기A조 (4부통합)",
+      "opponent": "라쿤스",
+      "score": "9:13",
+      "outcome": "패",
+      "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713007"
     },
     {
@@ -67,9 +79,11 @@
       "date": "2026-08-01",
       "time": "12:00",
       "place": "OKB",
-      "league": "",
-      "opponent": "",
-      "result": "BOX SCORE",
+      "league": "토요후반기A조 (4부통합)",
+      "opponent": "슬러거 브라더스",
+      "score": "11:8",
+      "outcome": "승",
+      "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713455"
     },
     {
@@ -77,9 +91,11 @@
       "date": "2026-09-05",
       "time": "06:10",
       "place": "OKB",
-      "league": "",
-      "opponent": "",
-      "result": "BOX SCORE",
+      "league": "토요후반기A조 (4부통합)",
+      "opponent": "백산 발바닥스",
+      "score": "4:14",
+      "outcome": "패",
+      "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713473"
     },
     {
@@ -87,9 +103,11 @@
       "date": "2026-09-19",
       "time": "12:10",
       "place": "OKB",
-      "league": "",
-      "opponent": "",
-      "result": "BOX SCORE",
+      "league": "토요후반기A조 (4부통합)",
+      "opponent": "넘버세븐 글러브공방",
+      "score": "5:23",
+      "outcome": "패 (콜드패)",
+      "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713487"
     },
     {
@@ -97,9 +115,11 @@
       "date": "2026-10-10",
       "time": "12:40",
       "place": "OKB",
-      "league": "",
-      "opponent": "",
-      "result": "게임대기",
+      "league": "토요후반기A조 (4부통합)",
+      "opponent": "디데이즈",
+      "score": "",
+      "outcome": "",
+      "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713497"
     },
     {
@@ -107,9 +127,11 @@
       "date": "2026-10-17",
       "time": "12:50",
       "place": "OKB",
-      "league": "",
-      "opponent": "",
-      "result": "게임대기",
+      "league": "토요후반기A조 (4부통합)",
+      "opponent": "BLUE DAWN",
+      "score": "",
+      "outcome": "",
+      "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713501"
     },
     {
@@ -117,9 +139,11 @@
       "date": "2026-11-07",
       "time": "09:10",
       "place": "OKB",
-      "league": "",
-      "opponent": "",
-      "result": "게임대기",
+      "league": "토요후반기A조 (4부통합)",
+      "opponent": "레알로얄",
+      "score": "",
+      "outcome": "",
+      "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713511"
     },
     {
@@ -127,9 +151,11 @@
       "date": "2026-11-21",
       "time": "09:10",
       "place": "OKB",
-      "league": "",
-      "opponent": "",
-      "result": "게임대기",
+      "league": "토요후반기A조 (4부통합)",
+      "opponent": "한강자이언츠",
+      "score": "",
+      "outcome": "",
+      "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713518"
     },
     {
@@ -137,9 +163,11 @@
       "date": "2026-11-28",
       "time": "07:30",
       "place": "OKB",
-      "league": "",
-      "opponent": "",
-      "result": "게임대기",
+      "league": "토요후반기A조 (4부통합)",
+      "opponent": "수퍼노바",
+      "score": "",
+      "outcome": "",
+      "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713522"
     },
     {
@@ -147,9 +175,11 @@
       "date": "2026-12-12",
       "time": "09:50",
       "place": "OKB",
-      "league": "",
-      "opponent": "",
-      "result": "게임대기",
+      "league": "토요후반기A조 (4부통합)",
+      "opponent": "SECRET BEARS",
+      "score": "",
+      "outcome": "",
+      "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713529"
     }
   ]
