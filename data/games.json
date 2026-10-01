@@ -1,1 +1,156 @@
-{"updated": null, "club_idx": 36818, "games": []}
+{
+  "updated": "2026-10-01T14:34+09:00",
+  "club_idx": 36818,
+  "games": [
+    {
+      "type": "game",
+      "date": "2026-05-09",
+      "time": "08:00",
+      "place": "OKB",
+      "league": "",
+      "opponent": "",
+      "result": "BOX SCORE",
+      "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1685792"
+    },
+    {
+      "type": "game",
+      "date": "2026-05-23",
+      "time": "08:00",
+      "place": "OKB",
+      "league": "",
+      "opponent": "",
+      "result": "BOX SCORE",
+      "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1685804"
+    },
+    {
+      "type": "game",
+      "date": "2026-05-30",
+      "time": "06:00",
+      "place": "OKB",
+      "league": "",
+      "opponent": "",
+      "result": "BOX SCORE",
+      "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1685809"
+    },
+    {
+      "type": "game",
+      "date": "2026-07-04",
+      "time": "09:50",
+      "place": "OKB",
+      "league": "",
+      "opponent": "",
+      "result": "BOX SCORE",
+      "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1685837"
+    },
+    {
+      "type": "game",
+      "date": "2026-07-11",
+      "time": "09:50",
+      "place": "OKB",
+      "league": "",
+      "opponent": "",
+      "result": "BOX SCORE",
+      "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1685824"
+    },
+    {
+      "type": "game",
+      "date": "2026-07-25",
+      "time": "15:40",
+      "place": "OKB",
+      "league": "",
+      "opponent": "",
+      "result": "BOX SCORE",
+      "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713007"
+    },
+    {
+      "type": "game",
+      "date": "2026-08-01",
+      "time": "12:00",
+      "place": "OKB",
+      "league": "",
+      "opponent": "",
+      "result": "BOX SCORE",
+      "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713455"
+    },
+    {
+      "type": "game",
+      "date": "2026-09-05",
+      "time": "06:10",
+      "place": "OKB",
+      "league": "",
+      "opponent": "",
+      "result": "BOX SCORE",
+      "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713473"
+    },
+    {
+      "type": "game",
+      "date": "2026-09-19",
+      "time": "12:10",
+      "place": "OKB",
+      "league": "",
+      "opponent": "",
+      "result": "BOX SCORE",
+      "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713487"
+    },
+    {
+      "type": "game",
+      "date": "2026-10-10",
+      "time": "12:40",
+      "place": "OKB",
+      "league": "",
+      "opponent": "",
+      "result": "게임대기",
+      "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713497"
+    },
+    {
+      "type": "game",
+      "date": "2026-10-17",
+      "time": "12:50",
+      "place": "OKB",
+      "league": "",
+      "opponent": "",
+      "result": "게임대기",
+      "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713501"
+    },
+    {
+      "type": "game",
+      "date": "2026-11-07",
+      "time": "09:10",
+      "place": "OKB",
+      "league": "",
+      "opponent": "",
+      "result": "게임대기",
+      "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713511"
+    },
+    {
+      "type": "game",
+      "date": "2026-11-21",
+      "time": "09:10",
+      "place": "OKB",
+      "league": "",
+      "opponent": "",
+      "result": "게임대기",
+      "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713518"
+    },
+    {
+      "type": "game",
+      "date": "2026-11-28",
+      "time": "07:30",
+      "place": "OKB",
+      "league": "",
+      "opponent": "",
+      "result": "게임대기",
+      "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713522"
+    },
+    {
+      "type": "game",
+      "date": "2026-12-12",
+      "time": "09:50",
+      "place": "OKB",
+      "league": "",
+      "opponent": "",
+      "result": "게임대기",
+      "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713529"
+    }
+  ]
+}
