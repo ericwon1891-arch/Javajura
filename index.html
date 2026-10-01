@@ -10,13 +10,13 @@
   :root {
     --bg: #f6f5f1; --card: #ffffff; --ink: #1d1f23; --muted: #6b6f76; --line: #e3e1da;
     --game: #c8372d; --game-soft: #fbe9e7; --practice: #1f6f4a; --practice-soft: #e4f2ea;
-    --accent: #1d3557;
+    --accent: #1d3557; --today: #fff4cf; --sun: #c8372d; --sat: #2f5fb3;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --bg: #15171a; --card: #1e2125; --ink: #ecebe7; --muted: #9a9ea5; --line: #2e3237;
       --game: #ff7b6e; --game-soft: #3a2220; --practice: #5fcf98; --practice-soft: #1b3226;
-      --accent: #9cc3ff;
+      --accent: #9cc3ff; --today: #3a3420; --sun: #ff7b6e; --sat: #8fb4ff;
     }
   }
   * { box-sizing: border-box; }
@@ -24,35 +24,55 @@
     margin: 0; background: var(--bg); color: var(--ink);
     font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
   }
-  main { max-width: 640px; margin: 0 auto; padding: 24px 16px 48px; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
   header h1 { margin: 0; font-size: 26px; letter-spacing: -0.02em; }
   header p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
 
-  .next { margin: 20px 0; padding: 18px; border-radius: 14px; background: var(--accent); color: #fff; }
+  .next { margin: 20px 0; padding: 16px 18px; border-radius: 14px; background: var(--accent); color: #fff; }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .next { color: #10151c; } }
   .next small { opacity: .8; font-size: 13px; }
-  .next .what { font-size: 20px; font-weight: 700; margin-top: 2px; }
-  .next .when { font-size: 15px; margin-top: 2px; }
+  .next .what { font-size: 19px; font-weight: 700; margin-top: 2px; }
+  .next .when { font-size: 14px; margin-top: 2px; }
 
-  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 8px; }
-  .filters button {
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 16px 0 10px; flex-wrap: wrap; }
+  .monthnav { display: flex; align-items: center; gap: 6px; }
+  .monthnav h2 { margin: 0 4px; font-size: 20px; min-width: 120px; text-align: center; }
+  .btn {
     border: 1px solid var(--line); background: var(--card); color: var(--ink);
-    border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 14px; cursor: pointer;
+    border-radius: 999px; padding: 5px 12px; font: inherit; font-size: 14px; cursor: pointer;
   }
-  .filters button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .btn[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .filters { display: flex; gap: 6px; }
 
-  h2.month { font-size: 15px; color: var(--muted); margin: 24px 0 8px; font-weight: 600; }
-  .item {
-    display: grid; grid-template-columns: 56px 1fr; gap: 12px; align-items: start;
-    background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--c);
-    border-radius: 10px; padding: 12px; margin-bottom: 8px; text-decoration: none; color: inherit;
+  .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); background: var(--card); border-radius: 10px; overflow: hidden; }
+  .cal .dow { text-align: center; font-size: 12px; font-weight: 700; padding: 6px 0; color: var(--muted); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg); }
+  .cal .dow.sat { color: var(--sat); } .cal .dow.sun { color: var(--sun); }
+  .cell {
+    min-height: 84px; padding: 4px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    display: flex; flex-direction: column; gap: 3px; cursor: pointer; background: none; border-top: 0; border-left: 0;
+    font: inherit; color: inherit; text-align: left; min-width: 0;
   }
-  .item.game { --c: var(--game); --soft: var(--game-soft); }
-  .item.practice { --c: var(--practice); --soft: var(--practice-soft); }
-  .item.past { opacity: .55; }
-  .day { text-align: center; }
-  .day b { display: block; font-size: 22px; line-height: 1.1; }
-  .day span { font-size: 12px; color: var(--muted); }
+  .cell.out { background: var(--bg); }
+  .cell.out .num { opacity: .4; }
+  .cell.today { background: var(--today); }
+  .cell.sel { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .num { font-size: 13px; font-weight: 600; line-height: 1; }
+  .cell.sat .num { color: var(--sat); } .cell.sun .num { color: var(--sun); }
+  .ev {
+    display: block; font-size: 11px; line-height: 1.25; padding: 2px 4px; border-radius: 4px;
+    background: var(--soft); color: var(--c); font-weight: 700;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .game { --c: var(--game); --soft: var(--game-soft); }
+  .practice { --c: var(--practice); --soft: var(--practice-soft); }
+  .ev.done { opacity: .6; }
+
+  .detail { margin-top: 16px; }
+  .detail h3 { font-size: 15px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
+  .item {
+    display: block; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--c);
+    border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; text-decoration: none; color: inherit;
+  }
   .tag { display: inline-block; font-size: 12px; font-weight: 700; color: var(--c); background: var(--soft); border-radius: 4px; padding: 1px 6px; margin-right: 6px; }
   .title { font-weight: 600; }
   .meta { font-size: 14px; color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
@@ -60,37 +80,54 @@
   .result.win { color: var(--practice); }
   .result.lose { color: var(--game); }
   .empty, .note { color: var(--muted); font-size: 14px; }
-  .toggle { margin-top: 20px; background: none; border: 0; color: var(--accent); font: inherit; font-size: 14px; cursor: pointer; padding: 0; }
   footer { margin-top: 32px; font-size: 12px; color: var(--muted); }
   footer a { color: inherit; }
+
+  @media (max-width: 480px) {
+    main { padding: 20px 10px 40px; }
+    .cell { min-height: 64px; padding: 3px 2px; }
+    .ev { font-size: 10px; padding: 1px 2px; }
+    .ev .long { display: none; }
+    .monthnav h2 { font-size: 18px; min-width: 104px; }
+  }
 </style>
 </head>
 <body>
 <main>
   <header>
     <h1>⚾ 자바주라 일정표</h1>
-    <p>게임원 경기 일정과 팀 연습을 한곳에서 봅니다.</p>
+    <p>게임원 경기 일정과 팀 연습을 한곳에서 봅니다. 날짜를 누르면 자세히 나옵니다.</p>
   </header>
 
   <section class="next" id="next" hidden></section>
 
-  <div class="filters" role="group" aria-label="일정 종류">
-    <button data-f="all" aria-pressed="true">전체</button>
-    <button data-f="game" aria-pressed="false">경기</button>
-    <button data-f="practice" aria-pressed="false">연습</button>
+  <div class="bar">
+    <div class="monthnav">
+      <button class="btn" id="prev" aria-label="이전 달">◀</button>
+      <h2 id="month-title"></h2>
+      <button class="btn" id="next-month" aria-label="다음 달">▶</button>
+      <button class="btn" id="this-month">오늘</button>
+    </div>
+    <div class="filters" role="group" aria-label="일정 종류">
+      <button class="btn" data-f="all" aria-pressed="true">전체</button>
+      <button class="btn" data-f="game" aria-pressed="false">경기</button>
+      <button class="btn" data-f="practice" aria-pressed="false">연습</button>
+    </div>
   </div>
 
-  <div id="list"><p class="note">일정을 불러오는 중…</p></div>
-  <button class="toggle" id="toggle-past" hidden></button>
+  <div class="cal" id="cal"><p class="note" style="grid-column: 1 / -1; padding: 12px;">일정을 불러오는 중…</p></div>
+  <section class="detail" id="detail"></section>
 
   <footer id="footer"></footer>
 </main>
 <script>
 const DOW = ["일", "월", "화", "수", "목", "금", "토"];
-const state = { filter: "all", showPast: false, items: [], games: null };
+const HEAD = ["월", "화", "수", "목", "금", "토", "일"];
+const state = { filter: "all", items: [], year: 0, month: 0, selected: null };
 
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const todayKST = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+const iso = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
 async function load(path) {
   try {
@@ -117,60 +154,122 @@ function describe(it) {
   };
 }
 
-function render() {
-  const today = todayKST();
-  const visible = state.items.filter(it => state.filter === "all" || it.type === state.filter);
-  const upcoming = visible.filter(it => it.date >= today);
-  const past = visible.filter(it => it.date < today);
-  const shown = state.showPast ? [...past, ...upcoming] : upcoming;
-
-  const next = state.items.find(it => it.date >= today);
-  const nextEl = document.getElementById("next");
-  if (next) {
-    const d = describe(next), dt = new Date(next.date + "T00:00:00");
-    const days = Math.round((dt - new Date(today + "T00:00:00")) / 864e5);
-    nextEl.innerHTML = `<small>다음 일정 · ${days === 0 ? "오늘" : days === 1 ? "내일" : days + "일 뒤"}</small>
-      <div class="what">${esc(d.tag)} ${esc(d.title)}</div>
-      <div class="when">${dt.getMonth() + 1}월 ${dt.getDate()}일 (${DOW[dt.getDay()]}) ${esc(d.meta)}</div>`;
-    nextEl.hidden = false;
-  } else nextEl.hidden = true;
-
-  const list = document.getElementById("list");
-  if (!shown.length) {
-    list.innerHTML = `<p class="empty">${state.showPast ? "일정이 없습니다." : "예정된 일정이 없습니다."}</p>`;
-  } else {
-    let html = "", month = "";
-    for (const it of shown) {
-      const dt = new Date(it.date + "T00:00:00");
-      const m = `${dt.getFullYear()}년 ${dt.getMonth() + 1}월`;
-      if (m !== month) { html += `<h2 class="month">${m}</h2>`; month = m; }
-      const d = describe(it);
-      const tagName = it.url ? "a" : "div";
-      const href = it.url ? ` href="${esc(it.url)}" target="_blank" rel="noopener"` : "";
-      html += `<${tagName} class="item ${it.type}${it.date < today ? " past" : ""}"${href}>
-        <div class="day"><b>${dt.getDate()}</b><span>${DOW[dt.getDay()]}요일</span></div>
-        <div>
-          <div><span class="tag">${d.tag}</span><span class="title">${esc(d.title)}</span></div>
-          ${d.meta || d.result ? `<div class="meta">${d.result ? `<span class="result ${d.win || ""}">${esc(d.result)}</span> · ` : ""}${esc(d.meta)}</div>` : ""}
-        </div>
-      </${tagName}>`;
-    }
-    list.innerHTML = html;
+// 칸 안에 들어갈 짧은 글: 경기는 '시간 상대'(끝난 경기는 '승/패 점수'), 연습은 '시간 연습'
+function chip(it) {
+  const time = (it.time || "").slice(0, 5);
+  if (it.type === "game") {
+    const head = it.outcome ? it.outcome.slice(0, 1) : time;
+    return `${esc(head)} <span class="long">${esc(it.opponent || "경기")}</span>`;
   }
-
-  const toggle = document.getElementById("toggle-past");
-  toggle.hidden = !past.length;
-  toggle.textContent = state.showPast ? "지난 일정 숨기기" : `지난 일정 보기 (${past.length})`;
+  return `${esc(time)} <span class="long">연습</span>`;
 }
 
-document.querySelectorAll(".filters button").forEach(b => b.addEventListener("click", () => {
+function visible() {
+  return state.items.filter(it => state.filter === "all" || it.type === state.filter);
+}
+
+function renderCalendar() {
+  const today = todayKST();
+  const { year, month } = state;
+  document.getElementById("month-title").textContent = `${year}년 ${month + 1}월`;
+
+  const byDate = {};
+  for (const it of visible()) (byDate[it.date] ||= []).push(it);
+
+  // 월요일 시작: 1일이 속한 주의 월요일부터 채운다. 5주로 다 안 들어가는 달만 6주.
+  const first = new Date(year, month, 1);
+  const lead = (first.getDay() + 6) % 7;
+  const days = new Date(year, month + 1, 0).getDate();
+  const weeks = Math.ceil((lead + days) / 7) > 5 ? 6 : 5;
+  const start = new Date(year, month, 1 - lead);
+
+  let html = HEAD.map((h, i) => `<div class="dow${i === 5 ? " sat" : i === 6 ? " sun" : ""}">${h}</div>`).join("");
+  for (let i = 0; i < weeks * 7; i++) {
+    const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+    const key = iso(d);
+    const evs = byDate[key] || [];
+    const cls = ["cell",
+      d.getMonth() !== month ? "out" : "",
+      key === today ? "today" : "",
+      key === state.selected ? "sel" : "",
+      i % 7 === 5 ? "sat" : i % 7 === 6 ? "sun" : ""].filter(Boolean).join(" ");
+    html += `<button class="${cls}" data-date="${key}" aria-label="${d.getMonth() + 1}월 ${d.getDate()}일 일정 ${evs.length}개">
+      <span class="num">${d.getDate()}</span>
+      ${evs.map(it => `<span class="ev ${it.type}${key < today ? " done" : ""}">${chip(it)}</span>`).join("")}
+    </button>`;
+  }
+  const cal = document.getElementById("cal");
+  cal.innerHTML = html;
+  cal.querySelectorAll(".cell").forEach(c => c.addEventListener("click", () => {
+    state.selected = c.dataset.date;
+    const d = new Date(c.dataset.date + "T00:00:00");
+    if (d.getMonth() !== state.month) { state.year = d.getFullYear(); state.month = d.getMonth(); }
+    render();
+  }));
+}
+
+function renderDetail() {
+  const el = document.getElementById("detail");
+  const today = todayKST();
+  let items, heading;
+  if (state.selected) {
+    const d = new Date(state.selected + "T00:00:00");
+    items = visible().filter(it => it.date === state.selected);
+    heading = `${d.getMonth() + 1}월 ${d.getDate()}일 (${DOW[d.getDay()]})`;
+  } else {
+    const prefix = `${state.year}-${String(state.month + 1).padStart(2, "0")}`;
+    items = visible().filter(it => it.date.startsWith(prefix));
+    heading = `${state.month + 1}월 일정`;
+  }
+  if (!items.length) { el.innerHTML = `<h3>${heading}</h3><p class="empty">일정이 없습니다.</p>`; return; }
+  el.innerHTML = `<h3>${heading}</h3>` + items.map(it => {
+    const d = describe(it), dt = new Date(it.date + "T00:00:00");
+    const tagName = it.url ? "a" : "div";
+    const href = it.url ? ` href="${esc(it.url)}" target="_blank" rel="noopener"` : "";
+    const day = state.selected ? "" : `${dt.getDate()}일(${DOW[dt.getDay()]}) `;
+    return `<${tagName} class="item ${it.type}"${href}>
+      <div><span class="tag">${d.tag}</span><span class="title">${day}${esc(d.title)}</span></div>
+      ${d.meta || d.result ? `<div class="meta">${d.result ? `<span class="result ${d.win || ""}">${esc(d.result)}</span> · ` : ""}${esc(d.meta)}</div>` : ""}
+    </${tagName}>`;
+  }).join("");
+}
+
+function renderNext() {
+  const today = todayKST();
+  const next = state.items.find(it => it.date >= today);
+  const el = document.getElementById("next");
+  if (!next) { el.hidden = true; return; }
+  const d = describe(next), dt = new Date(next.date + "T00:00:00");
+  const days = Math.round((dt - new Date(today + "T00:00:00")) / 864e5);
+  el.innerHTML = `<small>다음 일정 · ${days === 0 ? "오늘" : days === 1 ? "내일" : days + "일 뒤"}</small>
+    <div class="what">${next.type === "game" ? "경기 " : ""}${esc(d.title)}</div>
+    <div class="when">${dt.getMonth() + 1}월 ${dt.getDate()}일 (${DOW[dt.getDay()]}) ${esc(d.meta)}</div>`;
+  el.hidden = false;
+}
+
+function render() { renderNext(); renderCalendar(); renderDetail(); }
+
+function shiftMonth(n) {
+  const d = new Date(state.year, state.month + n, 1);
+  state.year = d.getFullYear(); state.month = d.getMonth(); state.selected = null;
+  render();
+}
+document.getElementById("prev").addEventListener("click", () => shiftMonth(-1));
+document.getElementById("next-month").addEventListener("click", () => shiftMonth(1));
+document.getElementById("this-month").addEventListener("click", () => {
+  const t = new Date(todayKST() + "T00:00:00");
+  state.year = t.getFullYear(); state.month = t.getMonth(); state.selected = null;
+  render();
+});
+document.querySelectorAll(".filters .btn").forEach(b => b.addEventListener("click", () => {
   state.filter = b.dataset.f;
-  document.querySelectorAll(".filters button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  document.querySelectorAll(".filters .btn").forEach(x => x.setAttribute("aria-pressed", x === b));
   render();
 }));
-document.getElementById("toggle-past").addEventListener("click", () => { state.showPast = !state.showPast; render(); });
 
 (async () => {
+  const t = new Date(todayKST() + "T00:00:00");
+  state.year = t.getFullYear(); state.month = t.getMonth();
   const [games, practices] = await Promise.all([load("data/games.json"), load("data/practices.json")]);
   state.items = [...(games?.games || []), ...(practices?.practices || [])]
     .filter(it => it.date)
