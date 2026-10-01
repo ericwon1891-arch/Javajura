@@ -2,15 +2,6 @@
   "practices": [
     {
       "type": "practice",
-      "date": "2016-10-03",
-      "time": "11:00~13:00",
-      "place": "계양 야구장",
-      "headcount": 0,
-      "memo": "",
-      "issue": 1
-    },
-    {
-      "type": "practice",
       "date": "2026-10-03",
       "time": "11:00-13:00",
       "place": "계양 야구장",

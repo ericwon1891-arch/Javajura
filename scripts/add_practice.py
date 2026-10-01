@@ -25,7 +25,11 @@ def main():
     m = re.match(r"^(20\d\d)[.\-/](\d{1,2})[.\-/](\d{1,2})$", date)
     if not m:
         sys.exit(f"날짜 형식이 올바르지 않습니다: '{date}' (예: 2026-10-12)")
-    date = dt.date(*map(int, m.groups())).isoformat()
+    date = dt.date(*map(int, m.groups()))
+    # 연도 오타(예: 2016) 방지: 올해 앞뒤 1년만 받는다.
+    if abs(date.year - dt.date.today().year) > 1:
+        sys.exit(f"연도를 확인해 주세요: {date.isoformat()}")
+    date = date.isoformat()
     headcount = re.sub(r"\D", "", f.get("인원", ""))
 
     practice = {
