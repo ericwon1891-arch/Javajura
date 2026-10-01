@@ -10,6 +10,7 @@ import html
 import json
 import os
 import re
+import ssl
 import sys
 import urllib.request
 from html.parser import HTMLParser
@@ -67,9 +68,15 @@ class TableParser(HTMLParser):
             self._cell["text"] += data
 
 
+# 게임원 서버는 오래된 DH 키를 써서 기본 보안 수준(SECLEVEL=2)에서는 접속이 거부된다.
+# 인증서 검증은 그대로 두고 이 접속에서만 보안 수준을 1로 낮춘다.
+SSL_CTX = ssl.create_default_context()
+SSL_CTX.set_ciphers("DEFAULT:@SECLEVEL=1")
+
+
 def fetch(url):
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Language": "ko-KR,ko"})
-    with urllib.request.urlopen(req, timeout=30) as r:
+    with urllib.request.urlopen(req, timeout=30, context=SSL_CTX) as r:
         charset = r.headers.get_content_charset() or "utf-8"
         return r.read().decode(charset, errors="replace")
 
@@ -148,6 +155,10 @@ def main():
     for season in seasons:
         url = f"{BASE}/club/info/schedule/table?club_idx={club_idx}&season={season}"
         page = fetch(url)
+        if debug:
+            os.makedirs("debug", exist_ok=True)
+            with open(f"debug/table_{season}.html", "w", encoding="utf-8") as f:
+                f.write(page)
         p = TableParser()
         p.feed(page)
         found = games_from_tables(p.tables, season, club_idx)

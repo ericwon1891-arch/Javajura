@@ -30,6 +30,13 @@ jobs:
           GAMEONE_CLUB_IDX: ${{ vars.GAMEONE_CLUB_IDX || '36818' }}
           GAMEONE_DEBUG: ${{ inputs.debug && '1' || '0' }}
         run: python scripts/fetch_gameone.py
+      - name: 디버그용 원본 페이지 보관
+        if: always() && inputs.debug
+        uses: actions/upload-artifact@v4
+        with:
+          name: gameone-html
+          path: debug/
+          if-no-files-found: ignore
       - name: 바뀐 일정 저장
         run: |
           git config user.name "github-actions[bot]"
