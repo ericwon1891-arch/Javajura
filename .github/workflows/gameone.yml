@@ -27,7 +27,7 @@ jobs:
           python-version: "3.12"
       - name: 게임원에서 일정 가져오기
         env:
-          GAMEONE_CLUB_IDX: ${{ vars.GAMEONE_CLUB_IDX }}
+          GAMEONE_CLUB_IDX: ${{ vars.GAMEONE_CLUB_IDX || '36818' }}
           GAMEONE_DEBUG: ${{ inputs.debug && '1' || '0' }}
         run: python scripts/fetch_gameone.py
       - name: 바뀐 일정 저장

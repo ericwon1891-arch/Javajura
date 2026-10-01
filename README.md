@@ -3,7 +3,7 @@
 게임원 경기 일정과 팀 연습을 한 페이지에 보여주는 정적 사이트입니다 (GitHub Pages).
 
 ## 처음 한 번 설정
-1. Settings → Secrets and variables → Actions → **Variables** 에 `GAMEONE_CLUB_IDX` = 게임원 팀 번호 (`gameone.kr/club/?club_idx=숫자`의 숫자)
+1. 게임원 팀 번호는 36818 (워크플로에 기본값으로 들어 있음, 바꾸려면 Actions 변수 `GAMEONE_CLUB_IDX`)
 2. Settings → Pages → Source: `Deploy from a branch`, 브랜치 `main` / 폴더 `/ (root)`
 3. Actions → "게임원 일정 가져오기" → Run workflow 로 첫 수집
 
