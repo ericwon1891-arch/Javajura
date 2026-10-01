@@ -11,12 +11,14 @@
     --bg: #f6f5f1; --card: #ffffff; --ink: #1d1f23; --muted: #6b6f76; --line: #e3e1da;
     --game: #c8372d; --game-soft: #fbe9e7; --practice: #1f6f4a; --practice-soft: #e4f2ea;
     --accent: #1d3557; --today: #fff4cf; --sun: #c8372d; --sat: #2f5fb3;
+    --win: #1d5fb3; --win-soft: #e3edfb; --lose: #8a8f96; --lose-soft: #eeeeec;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       --bg: #15171a; --card: #1e2125; --ink: #ecebe7; --muted: #9a9ea5; --line: #2e3237;
       --game: #ff7b6e; --game-soft: #3a2220; --practice: #5fcf98; --practice-soft: #1b3226;
       --accent: #9cc3ff; --today: #3a3420; --sun: #ff7b6e; --sat: #8fb4ff;
+      --win: #8fb4ff; --win-soft: #1e2a3d; --lose: #a3a7ad; --lose-soft: #2a2d31;
     }
   }
   * { box-sizing: border-box; }
@@ -66,6 +68,18 @@
   .game { --c: var(--game); --soft: var(--game-soft); }
   .practice { --c: var(--practice); --soft: var(--practice-soft); }
   .ev.done { opacity: .6; }
+  .ev.win { --c: var(--win); --soft: var(--win-soft); }
+  .ev.lose { --c: var(--lose); --soft: var(--lose-soft); }
+  .ev.draw { --c: var(--muted); --soft: var(--bg); }
+
+  .record { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px 16px; margin: -8px 0 16px; }
+  .record small { display: block; font-size: 12px; color: var(--muted); }
+  .rec-main b { font-size: 20px; margin-right: 8px; }
+  .rec-main span { font-size: 13px; color: var(--muted); }
+  .rec-recent div { display: flex; gap: 4px; margin-top: 2px; }
+  .dot { width: 24px; height: 24px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 12px; font-weight: 700; color: #fff; background: var(--muted); }
+  .dot.win { background: var(--win); } .dot.lose { background: var(--lose); }
 
   .detail { margin-top: 16px; }
   .detail h3 { font-size: 15px; margin: 0 0 8px; color: var(--muted); font-weight: 600; }
@@ -77,8 +91,8 @@
   .title { font-weight: 600; }
   .meta { font-size: 14px; color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
   .result { font-weight: 700; color: var(--ink); }
-  .result.win { color: var(--practice); }
-  .result.lose { color: var(--game); }
+  .result.win { color: var(--win); }
+  .result.lose { color: var(--lose); }
   .empty, .note { color: var(--muted); font-size: 14px; }
   footer { margin-top: 32px; font-size: 12px; color: var(--muted); }
   footer a { color: inherit; }
@@ -100,6 +114,7 @@
   </header>
 
   <section class="next" id="next" hidden></section>
+  <section class="record" id="record" hidden></section>
 
   <div class="bar">
     <div class="monthnav">
@@ -158,10 +173,33 @@ function describe(it) {
 function chip(it) {
   const time = (it.time || "").slice(0, 5);
   if (it.type === "game") {
-    const head = it.outcome ? it.outcome.slice(0, 1) : time;
-    return `${esc(head)} <span class="long">${esc(it.opponent || "경기")}</span>`;
+    if (it.score) return `${esc(it.outcome.slice(0, 1))} ${esc(it.score)} <span class="long">${esc(it.opponent || "")}</span>`;
+    if (it.status) return `${esc(it.status)}`;
+    return `${esc(time)} <span class="long">${esc(it.opponent || "경기")}</span>`;
   }
   return `${esc(time)} <span class="long">연습</span>`;
+}
+
+function resultClass(it) {
+  const o = (it.outcome || "").slice(0, 1);
+  return o === "승" ? "win" : o === "패" ? "lose" : o === "무" ? "draw" : "";
+}
+
+function renderRecord() {
+  const el = document.getElementById("record");
+  const year = String(state.year);
+  const played = state.items.filter(it => it.type === "game" && it.score && it.date.startsWith(year));
+  if (!played.length) { el.hidden = true; return; }
+  const n = k => played.filter(it => resultClass(it) === k).length;
+  const w = n("win"), l = n("lose"), d = n("draw");
+  const [rf, ra] = played.reduce(([f, a], it) => { const [x, y] = it.score.split(":").map(Number); return [f + x, a + y]; }, [0, 0]);
+  const pct = w + l ? (w / (w + l)).toFixed(3).replace(/^0/, "") : "-";
+  const recent = played.slice(-5).map(it =>
+    `<span class="dot ${resultClass(it)}" title="${esc(it.date)} vs ${esc(it.opponent)} ${esc(it.score)}">${esc(it.outcome.slice(0, 1))}</span>`).join("");
+  el.innerHTML = `<div class="rec-main"><small>${year} 시즌 전적</small>
+      <b>${w}승 ${l}패${d ? ` ${d}무` : ""}</b><span>승률 ${pct} · 득점 ${rf} · 실점 ${ra}</span></div>
+    <div class="rec-recent"><small>최근 ${Math.min(5, played.length)}경기</small><div>${recent}</div></div>`;
+  el.hidden = false;
 }
 
 function visible() {
@@ -195,7 +233,7 @@ function renderCalendar() {
       i % 7 === 5 ? "sat" : i % 7 === 6 ? "sun" : ""].filter(Boolean).join(" ");
     html += `<button class="${cls}" data-date="${key}" aria-label="${d.getMonth() + 1}월 ${d.getDate()}일 일정 ${evs.length}개">
       <span class="num">${d.getDate()}</span>
-      ${evs.map(it => `<span class="ev ${it.type}${key < today ? " done" : ""}">${chip(it)}</span>`).join("")}
+      ${evs.map(it => `<span class="ev ${it.type}${it.score ? " " + resultClass(it) : key < today ? " done" : ""}">${chip(it)}</span>`).join("")}
     </button>`;
   }
   const cal = document.getElementById("cal");
@@ -247,7 +285,7 @@ function renderNext() {
   el.hidden = false;
 }
 
-function render() { renderNext(); renderCalendar(); renderDetail(); }
+function render() { renderNext(); renderRecord(); renderCalendar(); renderDetail(); }
 
 function shiftMonth(n) {
   const d = new Date(state.year, state.month + n, 1);
