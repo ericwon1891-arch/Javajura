@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-01T14:37+09:00",
+  "updated": "2026-10-10T18:12+09:00",
   "club_idx": 36818,
   "games": [
     {
@@ -117,8 +117,8 @@
       "place": "OKB",
       "league": "토요후반기A조 (4부통합)",
       "opponent": "디데이즈",
-      "score": "",
-      "outcome": "",
+      "score": "9:10",
+      "outcome": "패",
       "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713497"
     },
