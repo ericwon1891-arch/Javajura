@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-10T18:12+09:00",
+  "updated": "2026-10-17T16:18+09:00",
   "club_idx": 36818,
   "games": [
     {
@@ -129,8 +129,8 @@
       "place": "OKB",
       "league": "토요후반기A조 (4부통합)",
       "opponent": "BLUE DAWN",
-      "score": "",
-      "outcome": "",
+      "score": "5:27",
+      "outcome": "패 (콜드패)",
       "status": "",
       "url": "https://www.gameone.kr/club/info/schedule/boxscore?club_idx=36818&game_idx=1713501"
     },
